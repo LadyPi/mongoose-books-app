@@ -1,8 +1,11 @@
 // This file allows us to seed our application with data
 // simply run: `node seed.js` from the root of this project folder.
 
+//importing models that need to be used
 var db = require('./models');
 
+
+//premade data to use with our app of books
 var books_list = [
   {
   title: "To Kill a Mockingbird",
@@ -53,6 +56,7 @@ var books_list = [
   releaseDate: "Unknown 1597"
   }
 ];
+//list of authors and alive boolean
 var authors_list = [
   {
     name: "Harper Lee",
@@ -127,8 +131,11 @@ db.Author.remove({}, function(err, authors) {
   });
 });
 
+
+//removes/clears books
 // db.Book.remove({}, function(err, books){
 
+//creates books
 //   db.Book.create(books_list, function(err, books){
 //     if (err) { return console.log(err); }
 //     console.log("created", books.length, "books");

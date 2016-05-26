@@ -2,9 +2,9 @@
 // SERVER-SIDE JAVASCRIPT
 
 //require express in our app
-var express = require('express'),
- bodyParser = require('body-parser'),
- db = require('./models');
+var express = require('express');
+ bodyParser = require('body-parser');
+ var db = require('./models');
 
 // generate a new express app and call it 'app'
 var app = express();
@@ -62,10 +62,10 @@ app.post('/api/books', function (req, res) {
 //   });
 // });
 
-// this code will only add an author to a book if the author already exists
+// adds author to a book if author already exists
  db.Author.findOne({name: req.body.author}, function(err, author){
    newBook.author = author;
-   // add newBook to database
+   // anew book to database
    newBook.save(function(err, book){
      if (err) {
        return console.log("create error: " + err);
@@ -76,6 +76,40 @@ app.post('/api/books', function (req, res) {
  });
 
 });
+
+
+//characters route
+// Create a character associated with a book
+  app.post('/api/books/:book_id/characters', function (req, res) {
+    // Get book id from url params (`req.params`)
+    var bookId = req.params.book_id;
+    db.Book.findById(bookId)
+      .populate('author') // Reference to author
+      // now we can worry about saving that character
+      .exec(function(err, foundBook) {
+        console.log(foundBook);
+        if (err) {
+          res.status(500).json({error: err.message});
+        } else if (foundBook === null) {
+          // Is this the same as checking if the foundBook is undefined?
+          res.status(404).json({error: "No Book found by this ID"});
+        } else {
+          // push character into characters array
+          foundBook.characters.push(req.body);
+          // save the book with the new character
+          foundBook.save();
+          res.status(201).json(foundBook);
+        }
+      }
+    );
+  });
+
+
+
+
+
+
+
 
 app.listen(process.env.PORT || 3000, function () {
  console.log('Example app listening at http://localhost:3000/');
